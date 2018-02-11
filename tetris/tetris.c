@@ -74,6 +74,8 @@ gid_t	gid, egid;
 char	key_msg[100];
 int	showpreview;
 
+int	fastelide;		/* 1 => elide all full rows at once */
+
 static	void	elide(void);
 static	void	setup_board(void);
 	int	main(int, char **);
@@ -112,12 +114,18 @@ elide()
 			if (--j <= 0) {
 				/* this row is to be elided */
 				memset(&board[base], 0, B_COLS - 2);
-				scr_update();
-				tsleep();
+				if(!fastelide)
+				{
+					scr_update();
+					tsleep();
+				}
 				while (--base != 0)
 					board[base + B_COLS] = board[base];
-				scr_update();
-				tsleep();
+				if(!fastelide)
+				{
+					scr_update();
+					tsleep();
+				}
 				break;
 			}
 		}
@@ -146,8 +154,9 @@ main(argc, argv)
 	close(fd);
 
 	keys = "jkl pq";
+	fastelide = 0;
 
-	while ((ch = getopt(argc, argv, "k:l:ps")) != -1)
+	while ((ch = getopt(argc, argv, "k:l:fps")) != -1)
 		switch(ch) {
 		case 'k':
 			if (strlen(keys = optarg) != 6)
@@ -166,6 +175,10 @@ main(argc, argv)
 		case 's':
 			showscores(0);
 			exit(0);
+			break;
+		case 'f':
+			fastelide = 1;
+			break;
 		case '?':
 		default:
 			usage();
@@ -332,6 +345,6 @@ onintr(signo)
 void
 usage()
 {
-	(void)fprintf(stderr, "usage: tetris-bsd [-ps] [-k keys] [-l level]\n");
+	(void)fprintf(stderr, "usage: tetris-bsd [-fps] [-k keys] [-l level]\n");
 	exit(1);
 }

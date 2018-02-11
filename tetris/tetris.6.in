@@ -40,7 +40,7 @@
 .Nd the game of tetris
 .Sh SYNOPSIS
 .Nm
-.Op Fl ps
+.Op Fl fps
 .Op Fl k Ar keys
 .Op Fl l Ar level
 .Sh DESCRIPTION
@@ -95,6 +95,8 @@ Select a level of play.
 Display the top scores.
 .It Fl p
 Switch on previewing of the shape that will appear next.
+.It Fl f
+Switch on fast elision of completed rows.
 .El
 .Pp
 .Sh PLAY
@@ -155,3 +157,5 @@ Manual adapted from the original entry written by Nancy L. Tinkham and
 Darren F. Provine.
 .Pp
 Code for previewing next shape added by Hubert Feyrer in 1999.
+.Pp
+Code for fast elision added by Joel Fridolin Meyer (sirjofri) in 2018.
