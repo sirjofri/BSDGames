@@ -85,11 +85,11 @@ extern int	Rows, Cols;	/* current screen size */
  * A `shape' is the fundamental thing that makes up the game.  There
  * are 7 basic shapes, each consisting of four `blots':
  *
- *	X.X	  X.X		X.X
- *	  X.X	X.X	X.X.X	X.X	X.X.X	X.X.X	X.X.X.X
- *			  X		X	    X
+ *      X.X       X.X           X.X
+ *        X.X   X.X     X.X.X   X.X     X.X.X   X.X.X   X.X.X.X
+ *                        X             X           X
  *
- *	  0	  1	  2	  3	  4	  5	  6
+ *        0       1       2       3       4       5       6
  *
  * Except for 3 and 6, the center of each shape is one of the blots.
  * This blot is designated (0,0).  The other three blots can then be
@@ -128,7 +128,9 @@ struct shape {
 };
 
 extern const struct shape shapes[];
-#define	randshape() (&shapes[random() % 7])
+//#define	randshape() (&shapes[random() % 7])
+const struct shape *randshape(void);
+void genbag(void);
 
 extern const struct shape *curshape;
 extern const struct shape *nextshape;

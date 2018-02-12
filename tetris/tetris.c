@@ -66,6 +66,11 @@ int	Rows, Cols;		/* current screen size */
 const struct shape *curshape;
 const struct shape *nextshape;
 
+#define bagsize 7
+const struct shape *bag[bagsize];
+int bagptr = bagsize;
+int usebag;
+
 long	fallrate;		/* less than 1 million; smaller => faster */
 
 int	score;			/* the obvious thing */
@@ -155,8 +160,9 @@ main(argc, argv)
 
 	keys = "jkl pq";
 	fastelide = 0;
+	usebag = 1;
 
-	while ((ch = getopt(argc, argv, "k:l:fps")) != -1)
+	while ((ch = getopt(argc, argv, "k:l:bfps")) != -1)
 		switch(ch) {
 		case 'k':
 			if (strlen(keys = optarg) != 6)
@@ -178,6 +184,9 @@ main(argc, argv)
 			break;
 		case 'f':
 			fastelide = 1;
+			break;
+		case 'b':
+			usebag = 0;
 			break;
 		case '?':
 		default:
@@ -334,6 +343,42 @@ main(argc, argv)
 }
 
 void
+genbag(void)
+{
+	for(int i=0; i<7; i++)
+	{
+		const struct shape *id = 0;
+		genbag_loop: while(id == 0)
+		{
+			id = &shapes[random() % 7];
+			for(int j=0; j<i; j++)
+			{
+				if(bag[j] == id)
+				{
+					id = 0;
+					goto genbag_loop;
+				}
+			}
+		}
+		bag[i] = id;
+	}
+}
+
+const struct shape
+*randshape(void)
+{
+	if(!usebag)
+		return &shapes[random() % 7];
+
+	if(bagptr >= bagsize)
+	{
+		bagptr = 0;
+		genbag();
+	}
+	return bag[bagptr++];
+}
+
+void
 onintr(signo)
 	int signo __attribute__((__unused__));
 {
@@ -345,6 +390,6 @@ onintr(signo)
 void
 usage()
 {
-	(void)fprintf(stderr, "usage: tetris-bsd [-fps] [-k keys] [-l level]\n");
+	(void)fprintf(stderr, "usage: tetris-bsd [-bfps] [-k keys] [-l level]\n");
 	exit(1);
 }

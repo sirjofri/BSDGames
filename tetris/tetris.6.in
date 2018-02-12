@@ -97,6 +97,8 @@ Display the top scores.
 Switch on previewing of the shape that will appear next.
 .It Fl f
 Switch on fast elision of completed rows.
+.It Fl b
+Switch off bag support. Without this flag one bag will be filled and dealt before another one is generated.
 .El
 .Pp
 .Sh PLAY
@@ -158,4 +160,4 @@ Darren F. Provine.
 .Pp
 Code for previewing next shape added by Hubert Feyrer in 1999.
 .Pp
-Code for fast elision added by Joel Fridolin Meyer (sirjofri) in 2018.
+Code for fast elision and bag support added by Joel Fridolin Meyer (sirjofri) in 2018.
