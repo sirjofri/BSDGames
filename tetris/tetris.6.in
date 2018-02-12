@@ -40,7 +40,7 @@
 .Nd the game of tetris
 .Sh SYNOPSIS
 .Nm
-.Op Fl fps
+.Op Fl bfps
 .Op Fl k Ar keys
 .Op Fl l Ar level
 .Sh DESCRIPTION
