@@ -56,7 +56,7 @@
 #define	B_SIZE	(B_ROWS * B_COLS)
 
 typedef unsigned char cell;
-extern cell	board[B_SIZE];	/* 1 => occupied, 0 => empty */
+extern cell	board[B_SIZE];	/* 1 => occupied, 0 => empty, 2 => ghost */
 
 	/* the displayed area (rows) */
 #define	D_FIRST	1

@@ -144,6 +144,7 @@ main(argc, argv)
 	char *argv[];
 {
 	int pos, ghostpos, c;
+	int ghost_placed = 0;
 	const char *keys;
 	int level = 2;
 	char key_write[6][10];
@@ -247,8 +248,14 @@ main(argc, argv)
 
 	for (;;) {
 		place(curshape, pos, 1);
-		if (useghost)
-			place(curshape, ghostpos, 1);
+
+		/*
+		 * Do not place a ghost block directly after dropping the block!
+		 */
+		if (useghost && !ghost_placed)
+			place(curshape, ghostpos, 2);
+		ghost_placed = 0;
+
 		scr_update();
 		place(curshape, pos, 0);
 		if (useghost)
@@ -371,7 +378,7 @@ main(argc, argv)
 			/* move to bottom */
 
 			if (useghost)
-			       place(curshape, ghostpos, 0);
+				ghost_placed = 1; /* Do not place ghost block after this! */
 
 			while (fits_in(curshape, pos + B_COLS)) {
 				pos += B_COLS;

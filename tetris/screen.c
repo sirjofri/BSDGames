@@ -451,7 +451,10 @@ scr_update()
 					putpad(so ? SOstr : SEstr);
 					cur_so = so;
 				}
-				putstr("  ");
+				if (so > 1) /* if ghost tile use ghost character */
+					putstr("▒▒"); /* two shaded chars (vim: i_CTRL-K ':S'. see :help digraphs) */
+				else
+					putstr("  ");
 			} else
 				putstr(so ? "XX" : "  ");
 			ccol = i + 1;

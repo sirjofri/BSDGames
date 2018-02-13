@@ -93,7 +93,8 @@ fits_in(shape, pos)
 
 /*
  * Write the given shape into the current board, turning it on
- * if `onoff' is 1, and off if `onoff' is 0.
+ * if `onoff' is 1, and off if `onoff' is 0. Setting `onoff'
+ * to 2 makes this whole thing a ghost block.
  */
 void
 place(shape, pos, onoff)
