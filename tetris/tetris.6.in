@@ -40,7 +40,7 @@
 .Nd the game of tetris
 .Sh SYNOPSIS
 .Nm
-.Op Fl bfps
+.Op Fl bfgps
 .Op Fl k Ar keys
 .Op Fl l Ar level
 .Sh DESCRIPTION
@@ -99,6 +99,8 @@ Switch on previewing of the shape that will appear next.
 Switch on fast elision of completed rows.
 .It Fl b
 Switch off bag support. Without this flag one bag will be filled and dealt before another one is generated.
+.It Fl g
+Switch on ghost block. Preview future location of the current block.
 .El
 .Pp
 .Sh PLAY
@@ -160,4 +162,4 @@ Darren F. Provine.
 .Pp
 Code for previewing next shape added by Hubert Feyrer in 1999.
 .Pp
-Code for fast elision and bag support added by Joel Fridolin Meyer (sirjofri) in 2018.
+Code for fast elision, bag support and ghosts added by Joel Fridolin Meyer (sirjofri) in 2018.

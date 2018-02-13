@@ -80,6 +80,7 @@ char	key_msg[100];
 int	showpreview;
 
 int	fastelide;		/* 1 => elide all full rows at once */
+int	useghost;		/* 1 => draw ghost tile */
 
 static	void	elide(void);
 static	void	setup_board(void);
@@ -142,7 +143,7 @@ main(argc, argv)
 	int argc;
 	char *argv[];
 {
-	int pos, c;
+	int pos, ghostpos, c;
 	const char *keys;
 	int level = 2;
 	char key_write[6][10];
@@ -161,8 +162,9 @@ main(argc, argv)
 	keys = "jkl pq";
 	fastelide = 0;
 	usebag = 1;
+	useghost = 0;
 
-	while ((ch = getopt(argc, argv, "k:l:bfps")) != -1)
+	while ((ch = getopt(argc, argv, "k:l:bfgps")) != -1)
 		switch(ch) {
 		case 'k':
 			if (strlen(keys = optarg) != 6)
@@ -187,6 +189,9 @@ main(argc, argv)
 			break;
 		case 'b':
 			usebag = 0;
+			break;
+		case 'g':
+			useghost = 1;
 			break;
 		case '?':
 		default:
@@ -231,12 +236,24 @@ main(argc, argv)
 	nextshape = randshape();
 	curshape = randshape();
 
+	/* calculate initial ghost position */
+	ghostpos = pos; // not in (if) to prevent maybe uninitialized warning
+	if (useghost) {
+		while (fits_in(curshape, ghostpos + B_COLS))
+			ghostpos += B_COLS;
+	}
+
 	scr_msg(key_msg, 1);
 
 	for (;;) {
 		place(curshape, pos, 1);
+		if (useghost)
+			place(curshape, ghostpos, 1);
 		scr_update();
 		place(curshape, pos, 0);
+		if (useghost)
+			place(curshape, ghostpos, 0);
+
 		c = tgetchar();
 		if (c < 0) {
 			/*
@@ -244,6 +261,14 @@ main(argc, argv)
 			 */
 			if (fits_in(curshape, pos + B_COLS)) {
 				pos += B_COLS;
+
+				/* calculate ghost position */
+				if (useghost) {
+					ghostpos = pos;
+					while (fits_in(curshape, ghostpos + B_COLS))
+						ghostpos += B_COLS;
+				}
+
 				continue;
 			}
 
@@ -262,6 +287,14 @@ main(argc, argv)
 			curshape = nextshape;
 			nextshape = randshape();
 			pos = A_FIRST*B_COLS + (B_COLS/2)-1;
+
+			if (useghost) {
+				/* calculate ghost position */
+				ghostpos = pos;
+				while (fits_in(curshape, ghostpos + B_COLS))
+					ghostpos += B_COLS;
+			}
+
 			if (!fits_in(curshape, pos))
 				break;
 			continue;
@@ -294,6 +327,14 @@ main(argc, argv)
 			/* move left */
 			if (fits_in(curshape, pos - 1))
 				pos--;
+
+			/* calculate ghost position */
+			if (useghost) {
+				ghostpos = pos;
+				while (fits_in(curshape, ghostpos + B_COLS))
+					ghostpos += B_COLS;
+			}
+
 			continue;
 		}
 		if (c == keys[1]) {
@@ -302,16 +343,36 @@ main(argc, argv)
 
 			if (fits_in(new, pos))
 				curshape = new;
+
+			/* calculate ghost position */
+			if (useghost) {
+				ghostpos = pos;
+				while (fits_in(curshape, ghostpos + B_COLS))
+					ghostpos += B_COLS;
+			}
+
 			continue;
 		}
 		if (c == keys[2]) {
 			/* move right */
 			if (fits_in(curshape, pos + 1))
 				pos++;
+
+			/* calculate ghost position */
+			if (useghost) {
+				ghostpos = pos;
+				while (fits_in(curshape, ghostpos + B_COLS))
+					ghostpos += B_COLS;
+			}
+
 			continue;
 		}
 		if (c == keys[3]) {
 			/* move to bottom */
+
+			if (useghost)
+			       place(curshape, ghostpos, 0);
+
 			while (fits_in(curshape, pos + B_COLS)) {
 				pos += B_COLS;
 				score++;
@@ -390,6 +451,6 @@ onintr(signo)
 void
 usage()
 {
-	(void)fprintf(stderr, "usage: tetris-bsd [-bfps] [-k keys] [-l level]\n");
+	(void)fprintf(stderr, "usage: tetris-bsd [-bfgps] [-k keys] [-l level]\n");
 	exit(1);
 }
