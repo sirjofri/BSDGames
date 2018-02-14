@@ -247,14 +247,17 @@ main(argc, argv)
 	scr_msg(key_msg, 1);
 
 	for (;;) {
-		place(curshape, pos, 1);
-
 		/*
 		 * Do not place a ghost block directly after dropping the block!
+		 *
+		 * Place the ghost before placing the actual tile to achieve a nice
+		 * overlap.
 		 */
 		if (useghost && !ghost_placed)
 			place(curshape, ghostpos, 2);
 		ghost_placed = 0;
+
+		place(curshape, pos, 1);
 
 		scr_update();
 		place(curshape, pos, 0);
