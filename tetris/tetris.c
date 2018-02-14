@@ -351,8 +351,18 @@ main(argc, argv)
 			/* turn */
 			const struct shape *new = &shapes[curshape->rot];
 
-			if (fits_in(new, pos))
-				curshape = new;
+			if (!fits_in(new, pos)) { /* move tile if necessary */
+				if (fits_in(new, pos+1)) {
+					pos++;
+				} else
+				if (fits_in(new, pos-1)) {
+					pos--;
+				} else
+				if (fits_in(new, pos-2)) { /* long tile at right border */
+					pos -= 2;
+				}
+			}
+			curshape = new;
 
 			/* calculate ghost position */
 			if (useghost) {
