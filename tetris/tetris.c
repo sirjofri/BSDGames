@@ -321,6 +321,8 @@ main(argc, argv)
 			static char msg[] =
 			    "paused - press RETURN to continue";
 
+			if (useghost)
+				place(curshape, ghostpos, 2);
 			place(curshape, pos, 1);
 			do {
 				scr_update();
