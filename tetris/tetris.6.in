@@ -40,7 +40,7 @@
 .Nd the game of tetris
 .Sh SYNOPSIS
 .Nm
-.Op Fl bfgps
+.Op Fl bfghps
 .Op Fl k Ar keys
 .Op Fl l Ar level
 .Sh DESCRIPTION
@@ -63,6 +63,8 @@ move left
 rotate 1/4 turn counterclockwise
 .It l
 move right
+.It d
+hold current shape
 .It Aq space
 drop
 .It p
@@ -83,7 +85,7 @@ argument must have the six keys in order, and, remember to quote any
 space or tab characters from the shell.
 For example:
 .sp
-.Dl "tetris -l 2 -k 'jkl pq'"
+.Dl "tetris -l 2 -k 'jkl pqd'"
 .sp
 will play the default games, i.e. level 2 and with the default
 control keys.
@@ -101,6 +103,8 @@ Switch on fast elision of completed rows.
 Switch off bag support. Without this flag one bag will be filled and dealt before another one is generated.
 .It Fl g
 Switch on ghost block. Preview future location of the current block.
+.It Fl s
+Switch off hold function. There is no preview of the hold buffer yet.
 .El
 .Pp
 .Sh PLAY
@@ -162,4 +166,5 @@ Darren F. Provine.
 .Pp
 Code for previewing next shape added by Hubert Feyrer in 1999.
 .Pp
-Code for fast elision, bag support and ghosts added by Joel Fridolin Meyer (sirjofri) in 2018.
+Code for fast elision, bag support, ghosts and hold function added by Joel
+Fridolin Meyer (sirjofri) in 2018.

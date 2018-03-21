@@ -66,6 +66,11 @@ int	Rows, Cols;		/* current screen size */
 const struct shape *curshape;
 const struct shape *nextshape;
 
+const struct shape *holdshape;	/* shape for hold function */
+const struct shape *holdbuf;	/* buf shape for hold function */
+int hold;			/* 0 => empty */
+int switched;			/* 1 => the shape has been switched */
+
 #define bagsize 7
 const struct shape *bag[bagsize];
 int bagptr = bagsize;
@@ -81,6 +86,7 @@ int	showpreview;
 
 int	fastelide;		/* 1 => elide all full rows at once */
 int	useghost;		/* 1 => draw ghost tile */
+int	usehold;		/* 1 => enable hold support */
 
 static	void	elide(void);
 static	void	setup_board(void);
@@ -160,12 +166,15 @@ main(argc, argv)
 		exit(1);
 	close(fd);
 
-	keys = "jkl pq";
+	keys = "jkl pqd";
 	fastelide = 0;
 	usebag = 1;
 	useghost = 0;
+	usehold = 1;
+	hold = 0;
+	switched = 0;
 
-	while ((ch = getopt(argc, argv, "k:l:bfgps")) != -1)
+	while ((ch = getopt(argc, argv, "k:l:bfghps")) != -1)
 		switch(ch) {
 		case 'k':
 			if (strlen(keys = optarg) != 6)
@@ -194,6 +203,9 @@ main(argc, argv)
 		case 'g':
 			useghost = 1;
 			break;
+		case 'h':
+			usehold = 0;
+			break;
 		case '?':
 		default:
 			usage();
@@ -207,8 +219,8 @@ main(argc, argv)
 
 	fallrate = 1000000 / level;
 
-	for (i = 0; i <= 5; i++) {
-		for (j = i+1; j <= 5; j++) {
+	for (i = 0; i <= 6; i++) {
+		for (j = i+1; j <= 6; j++) {
 			if (keys[i] == keys[j]) {
 				errx(1, "duplicate command keys specified.");
 			}
@@ -222,8 +234,8 @@ main(argc, argv)
 	}
 
 	sprintf(key_msg,
-"%s - left   %s - rotate   %s - right   %s - drop   %s - pause   %s - quit",
-		key_write[0], key_write[1], key_write[2], key_write[3],
+"%s - left   %s - rotate   %s - right  %s - hold   %s - drop   %s - pause   %s - quit",
+		key_write[0], key_write[1], key_write[2], key_write[6], key_write[3],
 		key_write[4], key_write[5]);
 
 	(void)signal(SIGINT, onintr);
@@ -289,6 +301,7 @@ main(argc, argv)
 			place(curshape, pos, 1);
 			score++;
 			elide();
+			switched = 0;
 
 			/*
 			 * Choose a new shape.  If it does not fit,
@@ -375,6 +388,23 @@ main(argc, argv)
 
 			continue;
 		}
+		if (usehold && !switched && c == keys[6]) {
+			/* hold key */
+			pos = A_FIRST*B_COLS + (B_COLS/2)-1;
+
+			if (hold) {
+				holdbuf = curshape;
+				curshape = holdshape;
+				holdshape = holdbuf;
+				switched = 1;
+				continue;
+			}
+			holdshape = curshape;
+			curshape = nextshape;
+			hold = 1;
+			switched = 1;
+			continue;
+		}
 		if (c == keys[2]) {
 			/* move right */
 			if (fits_in(curshape, pos + 1))
@@ -399,6 +429,7 @@ main(argc, argv)
 				pos += B_COLS;
 				score++;
 			}
+			switched = 0;
 			continue;
 		}
 		if (c == '\f') {
@@ -473,6 +504,6 @@ onintr(signo)
 void
 usage()
 {
-	(void)fprintf(stderr, "usage: tetris-bsd [-bfgps] [-k keys] [-l level]\n");
+	(void)fprintf(stderr, "usage: tetris-bsd [-bfghps] [-k keys] [-l level]\n");
 	exit(1);
 }
