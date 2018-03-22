@@ -134,6 +134,7 @@ void genbag(void);
 
 extern const struct shape *curshape;
 extern const struct shape *nextshape;
+extern const struct shape *holdshape;
 
 /*
  * Shapes fall at a rate faster than once per second.
@@ -170,6 +171,7 @@ extern gid_t	gid, egid;
 
 extern char	key_msg[100];
 extern int	showpreview;
+extern int	usehold;
 
 int	fits_in(const struct shape *, int);
 void	place(const struct shape *, int, int);

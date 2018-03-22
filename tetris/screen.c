@@ -379,6 +379,7 @@ scr_update()
 	int i, ccol, j;
 	sigset_t sigset, osigset;
 	static const struct shape *lastshape;
+	static const struct shape *lasthold;
 
 	sigemptyset(&sigset);
 	sigaddset(&sigset, SIGTSTP);
@@ -394,6 +395,42 @@ scr_update()
 			moveto(0, 0);
 		(void) printf("Score: %d", score);
 		curscore = score;
+	}
+
+	/* draw shape buffer (hold function) */
+	/* this is a copy of the next if part. I just adjusted the variables and values a bit. */
+	if (usehold && (lasthold != holdshape)) {
+		int i;
+		static int r=12, c=2;
+		int tr, tc, t; 
+
+		lasthold = holdshape;
+		
+		/* clean */
+		putpad(SEstr);
+		moveto(r-1, c-1); putstr("          ");
+		moveto(r,   c-1); putstr("          ");
+		moveto(r+1, c-1); putstr("          ");
+		moveto(r+2, c-1); putstr("          ");
+
+		moveto(r-3, c-2);
+		putstr("Hold Buffer:");
+
+		/* draw */
+		putpad(SOstr);
+		moveto(r, 2*c);
+		putstr("  ");
+		for(i=0; i<3; i++) {
+			t = c + r*B_COLS;
+			t += holdshape->off[i];
+
+			tr = t / B_COLS;
+			tc = t % B_COLS;
+
+			moveto(tr, 2*tc);
+			putstr("  ");
+		}
+		putpad(SEstr);
 	}
 
 	/* draw preview of nextpattern */

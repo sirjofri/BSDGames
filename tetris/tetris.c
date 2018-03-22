@@ -408,11 +408,13 @@ main(argc, argv)
 			}
 			/* we switched the shape, so we must wait for the next new shape */
 			switched = 1;
-			ghostpos = pos;
-			/* calculate new ghost position */
-			while (fits_in(curshape, ghostpos + B_COLS))
-				ghostpos += B_COLS;
-			place(curshape, ghostpos, 2);
+			if (useghost) {
+				ghostpos = pos;
+				/* calculate new ghost position */
+				while (fits_in(curshape, ghostpos + B_COLS))
+					ghostpos += B_COLS;
+				place(curshape, ghostpos, 2);
+			}
 			continue;
 		}
 		if (c == keys[2]) {
