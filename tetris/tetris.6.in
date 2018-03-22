@@ -103,7 +103,7 @@ Switch on fast elision of completed rows.
 Switch off bag support. Without this flag one bag will be filled and dealt before another one is generated.
 .It Fl g
 Switch on ghost block. Preview future location of the current block.
-.It Fl s
+.It Fl h
 Switch off hold function. There is no preview of the hold buffer yet.
 .El
 .Pp

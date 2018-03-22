@@ -392,17 +392,27 @@ main(argc, argv)
 			/* hold key */
 			pos = A_FIRST*B_COLS + (B_COLS/2)-1;
 
+			if (useghost) { /* hide ghost tile */
+				place(curshape, ghostpos, 0);
+			}
+
+			/* if there is something in the buffer */
 			if (hold) {
 				holdbuf = curshape;
 				curshape = holdshape;
 				holdshape = holdbuf;
-				switched = 1;
-				continue;
+			} else { /* aargh, I don't like else */
+				holdshape = curshape;
+				curshape = nextshape;
+				hold = 1; /* now we have a shape in the buffer*/
 			}
-			holdshape = curshape;
-			curshape = nextshape;
-			hold = 1;
+			/* we switched the shape, so we must wait for the next new shape */
 			switched = 1;
+			ghostpos = pos;
+			/* calculate new ghost position */
+			while (fits_in(curshape, ghostpos + B_COLS))
+				ghostpos += B_COLS;
+			place(curshape, ghostpos, 2);
 			continue;
 		}
 		if (c == keys[2]) {
